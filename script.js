@@ -202,8 +202,6 @@ if (!ext.supportLinearFiltering)
     config.BLOOM = false;
 }
 
-// startGUI();
-
 function getWebGLContext (canvas) {
     const params = { alpha: true, depth: false, stencil: false, antialias: false, preserveDrawingBuffer: false };
 
@@ -292,127 +290,6 @@ function supportRenderTextureFormat (gl, internalFormat, format, type) {
     if (status != gl.FRAMEBUFFER_COMPLETE)
         return false;
     return true;
-}
-
-function startGUI () {
-    var gui = new dat.GUI({ width: 300 });
-    gui.add(config, 'SIM_RESOLUTION', { '32': 32, '64': 64, '128': 128, '256': 256 }).name('sim resolution').onFinishChange(initFramebuffers);
-    gui.add(config, 'DYE_RESOLUTION', { '128': 128, '256': 256, '512': 512, '1024': 1024 }).name('dye resolution').onFinishChange(initFramebuffers);
-    gui.add(config, 'DENSITY_DISSIPATION', 0.9, 1.0).name('density diffusion');
-    gui.add(config, 'VELOCITY_DISSIPATION', 0.9, 1.0).name('velocity diffusion');
-    gui.add(config, 'PRESSURE_DISSIPATION', 0.0, 1.0).name('pressure diffusion');
-    gui.add(config, 'CURL', 0, 50).name('vorticity').step(1);
-    gui.add(config, 'SPLAT_RADIUS', 0.01, 1.0).name('splat radius');
-    gui.add(config, 'SHADING').name('shading');
-    gui.add(config, 'COLORFUL').name('colorful');
-    gui.add(config, 'PAUSED').name('paused').listen();
-
-    gui.add({ fun: () => {
-        splatStack.push(parseInt(Math.random() * 20) + 5);
-    } }, 'fun').name('Random splats');
-
-    let bloomFolder = gui.addFolder('Bloom');
-    bloomFolder.add(config, 'BLOOM').name('enabled');
-    bloomFolder.add(config, 'BLOOM_INTENSITY', 0.1, 2.0).name('intensity');
-    bloomFolder.add(config, 'BLOOM_THRESHOLD', 0.0, 1.0).name('threshold');
-
-    let captureFolder = gui.addFolder('Capture');
-    captureFolder.addColor(config, 'BACK_COLOR').name('background color');
-    captureFolder.add(config, 'TRANSPARENT').name('transparent');
-    captureFolder.add({ fun: captureScreenshot }, 'fun').name('take screenshot');
-
-    let github = gui.add({ fun : () => {
-        window.open('https://github.com/PavelDoGreat/WebGL-Fluid-Simulation');
-    } }, 'fun').name('Github');
-    github.__li.className = 'cr function bigFont';
-    github.__li.style.borderLeft = '3px solid #8C8C8C';
-    let githubIcon = document.createElement('span');
-    github.domElement.parentElement.appendChild(githubIcon);
-    githubIcon.className = 'icon github';
-
-    let twitter = gui.add({ fun : () => {
-        window.open('https://twitter.com/PavelDoGreat');
-    } }, 'fun').name('Twitter');
-    twitter.__li.className = 'cr function bigFont';
-    twitter.__li.style.borderLeft = '3px solid #8C8C8C';
-    let twitterIcon = document.createElement('span');
-    twitter.domElement.parentElement.appendChild(twitterIcon);
-    twitterIcon.className = 'icon twitter';
-
-    let discord = gui.add({ fun : () => {
-        window.open('https://discordapp.com/invite/CeqZDDE');
-    } }, 'fun').name('Discord');
-    discord.__li.className = 'cr function bigFont';
-    discord.__li.style.borderLeft = '3px solid #8C8C8C';
-    let discordIcon = document.createElement('span');
-    discord.domElement.parentElement.appendChild(discordIcon);
-    discordIcon.className = 'icon discord';
-
-    let app = gui.add({ fun : () => {
-        window.open('http://onelink.to/5b58bn');
-    } }, 'fun').name('Check out new improved version');
-    app.__li.className = 'cr function appBigFont';
-    app.__li.style.borderLeft = '3px solid #00FF7F';
-    let appIcon = document.createElement('span');
-    app.domElement.parentElement.appendChild(appIcon);
-    appIcon.className = 'icon app';
-
-    if (isMobile())
-        gui.close();
-}
-
-function captureScreenshot () {
-    colorProgram.bind();
-    gl.uniform4f(colorProgram.uniforms.color, 0, 0, 0, 1);
-    blit(density.write.fbo);
-
-    render(density.write.fbo);
-    gl.bindFramebuffer(gl.FRAMEBUFFER, density.write.fbo);
-
-    let length = dyeWidth * dyeHeight * 4;
-    let pixels = new Float32Array(length);
-    gl.readPixels(0, 0, dyeWidth, dyeHeight, gl.RGBA, gl.FLOAT, pixels);
-
-    let newPixels = new Uint8Array(length);
-
-    let id = 0;
-    for (let i = dyeHeight - 1; i >= 0; i--) {
-        for (let j = 0; j < dyeWidth; j++) {
-            let nid = i * dyeWidth * 4 + j * 4;
-            newPixels[nid + 0] = clamp01(pixels[id + 0]) * 255;
-            newPixels[nid + 1] = clamp01(pixels[id + 1]) * 255;
-            newPixels[nid + 2] = clamp01(pixels[id + 2]) * 255;
-            newPixels[nid + 3] = clamp01(pixels[id + 3]) * 255;
-            id += 4;
-        }
-    }
-
-    let captureCanvas = document.createElement('canvas');
-    let ctx = captureCanvas.getContext('2d');
-    captureCanvas.width = dyeWidth;
-    captureCanvas.height = dyeHeight;
-
-    let imageData = ctx.createImageData(dyeWidth, dyeHeight);
-    imageData.data.set(newPixels);
-    ctx.putImageData(imageData, 0, 0);
-    let datauri = captureCanvas.toDataURL();
-
-    downloadURI("fluid.png", datauri);
-
-    URL.revokeObjectURL(datauri);
-}
-
-function clamp01 (input) {
-    return Math.min(Math.max(input, 0), 1);
-}
-
-function downloadURI (filename, uri) {
-    let link = document.createElement("a");
-    link.download = filename;
-    link.href = uri;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
 }
 
 function isMobile () {
@@ -1490,10 +1367,15 @@ function getTextureScale (texture, width, height) {
 
 function rgbToPointerColor(color) {
     let c = color.split(" ");
-    let hue = RGBToHue(c[0], c[1], c[2]);
-    let c2 = HSVtoRGB(hue/360, 1.0, 1.0);
-    c2.r *= 0.15;
-    c2.g *= 0.15;
-    c2.b *= 0.15;
-    return c2;
+    // let hue = RGBToHue(c[0], c[1], c[2]);
+    // let c2 = HSVtoRGB(hue/360, 1.0, 1.0);
+    // c2.r *= 0.15;
+    // c2.g *= 0.15;
+    // c2.b *= 0.15;
+    // return c2;
+    return {
+        r: c[0] * 0.15,
+        g: c[1] * 0.15,
+        b: c[2] * 0.15
+    }
 }
