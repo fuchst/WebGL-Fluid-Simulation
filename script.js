@@ -139,8 +139,10 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             if (properties.splat_on_click) config.SPLAT_ON_CLICK = properties.splat_on_click.value;
             if (properties.show_mouse_movement) config.SHOW_MOUSE_MOVEMENT = properties.show_mouse_movement.value;
-            if (properties.fps) config.FRAME_INTERVAL_MS = 1000 / properties.fps.value;
-        }
+        },
+        applyGeneralProperties: (properties) => {
+            if (properties.fps) config.FRAME_INTERVAL_MS = 1000 / properties.fps;
+	}
     };
 
     window.wallpaperRegisterAudioListener((audioArray) => {
