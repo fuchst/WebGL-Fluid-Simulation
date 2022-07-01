@@ -1,7 +1,7 @@
 {
 	"approved" : true,
 	"contentrating" : "Everyone",
-	"description" : "Source Code: https://github.com/Delivator/WebGL-Fluid-Simulation\nCredit: https://github.com/PavelDoGreat/WebGL-Fluid-Simulation\n\n[h1] If the wallpaper is not working, try resetting the wallpaper engine system settings! [/h1]\nNo idea why but my wallpaper suddenly stopped working and resetting the Wallpaper Engine settings fixed it for me.",
+	"description" : "Original WebGL implementation: https://github.com/Delivator/WebGL-Fluid-Simulation\nOriginal Wallpaper Engine implementation: https://github.com/Delivator/WebGL-Fluid-Simulation.",
 	"file" : "index.html",
 	"general" : 
 	{
@@ -378,16 +378,22 @@
 				"text" : "Vorticity",
 				"type" : "slider",
 				"value" : 30
+			},
+			"fps" :
+			{
+				"fraction" : false,
+				"max" : 240,
+				"min" : 1,
+				"order" : 127,
+				"text" : "FPS",
+				"type" : "slider",
+				"value" : 60
 			}
 		},
 		"supportsaudioprocessing" : true
 	},
 	"preview" : "preview.gif",
 	"tags" : [ "Abstract" ],
-	"title" : "Colorful Fluid Animation [Audio Responsive]",
-	"type" : "web",
-	"version" : 4,
-	"visibility" : "public",
-	"workshopid" : "1748506393",
-	"workshopurl" : "steam://url/CommunityFilePage/1748506393"
+	"title" : "Colorful Fluid Animation [Audio Responsive] with FPS slider",
+	"type" : "web"
 }

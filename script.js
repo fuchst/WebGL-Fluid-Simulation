@@ -45,7 +45,9 @@ let config = {
     RANDOM_AMOUNT: 10,
     RANDOM_INTERVAL: 1,
     SPLAT_ON_CLICK: true,
-    SHOW_MOUSE_MOVEMENT: true
+    SHOW_MOUSE_MOVEMENT: true,
+    FRAME_INTERVAL_MS: 1000/60,
+    STEP_SIZE_MS: 0.016
 };
 
 document.addEventListener("DOMContentLoaded", () => {   
@@ -137,6 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             if (properties.splat_on_click) config.SPLAT_ON_CLICK = properties.splat_on_click.value;
             if (properties.show_mouse_movement) config.SHOW_MOUSE_MOVEMENT = properties.show_mouse_movement.value;
+            if (properties.fps) config.FRAME_INTERVAL_MS = 1000 / properties.fps.value;
         }
     };
 
@@ -968,13 +971,22 @@ let lastColorChangeTime = Date.now();
 
 update();
 
-function update () {
+function update() {
+
+    setTimeout(update, config.FRAME_INTERVAL_MS);
+
     resizeCanvas();
     input();
+
     if (!config.PAUSED)
-        step(0.016);
+        var remainingTimeS = config.FRAME_INTERVAL_MS/1000.0;
+        while (remainingTimeS > config.STEP_SIZE_MS) {
+            step(config.STEP_SIZE_MS);
+            remainingTimeS -= config.STEP_SIZE_MS;
+        }
+        step(remainingTimeS);
+
     render(null);
-    requestAnimationFrame(update);
 }
 
 function input () {
