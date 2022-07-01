@@ -47,7 +47,7 @@ let config = {
     SPLAT_ON_CLICK: true,
     SHOW_MOUSE_MOVEMENT: true,
     FRAME_INTERVAL_MS: 1000/60,
-    STEP_SIZE_MS: 0.016
+    STEP_SIZE_S: 0.016
 };
 
 document.addEventListener("DOMContentLoaded", () => {   
@@ -980,13 +980,14 @@ function update() {
     resizeCanvas();
     input();
 
-    if (!config.PAUSED)
+    if (!config.PAUSED) {
         var remainingTimeS = config.FRAME_INTERVAL_MS/1000.0;
-        while (remainingTimeS > config.STEP_SIZE_MS) {
-            step(config.STEP_SIZE_MS);
-            remainingTimeS -= config.STEP_SIZE_MS;
+        while (remainingTimeS > config.STEP_SIZE_S) {
+            step(config.STEP_SIZE_S);
+            remainingTimeS -= config.STEP_SIZE_S;
         }
         step(remainingTimeS);
+    }
 
     render(null);
 }
