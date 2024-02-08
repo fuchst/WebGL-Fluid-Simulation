@@ -142,7 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         applyGeneralProperties: (properties) => {
             if (properties.fps) config.FRAME_INTERVAL_MS = 1000 / properties.fps;
-	}
+	    }
     };
 
     window.wallpaperRegisterAudioListener((audioArray) => {
