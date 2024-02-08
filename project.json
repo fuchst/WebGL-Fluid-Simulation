@@ -151,14 +151,6 @@
 				"type" : "bool",
 				"value" : true
 			},
-			"fps" : 
-			{
-				"index" : 33,
-				"order" : 133,
-				"text" : "Max FPS",
-				"type" : "textinput",
-				"value" : "60"
-			},
 			"frequency_range" : 
 			{
 				"condition" : "audio_responsive.value",
